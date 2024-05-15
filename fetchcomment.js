@@ -16,7 +16,7 @@ const connectToDatabase = async () => {
 async function fetchComments(query = {}, options = {}) {
     try {
       const comments = await Comment.find(query)
-        .select('comment_body post_id comment_user -_id') 
+        .select('comment_body post_id comment_user _id') 
         .sort(options.sort || '-_id')
         .limit(options.limit || 50)
         .skip(options.skip || 0)

@@ -285,7 +285,7 @@ app.get('/posts/:postId', async (req, res) => {
     // const post = await Post.findById(postId).lean(); // Fetch the post
     const post = await Post.findById(postId).populate({
       path: 'post_comments',
-      select: 'comment_body comment_user' 
+      select: 'comment_body comment_user _id' 
     }).lean();
 
     if (!post) {
@@ -359,7 +359,7 @@ app.post("/posts/:id", async (req, res) => {
 
   try {
     // Find the post by ID and update its title and content
-    const updatedPost = await Post.findByIdAndUpdate(
+    await Post.findByIdAndUpdate(
       postId,
       { post_title: title, post_body: content },
       { new: true }
@@ -455,7 +455,7 @@ app.post('/post/:postId/comments', async (req, res) => {
 
     // res.redirect(`/post/${postId}`);
 
-    res.redirect("/");
+    res.redirect(`/posts/${postId}`);
   } catch (error) {
     console.error('Error posting comment:', error);
     res.status(500).send('Internal Server Error');
@@ -513,6 +513,27 @@ app.post('/post/:postId/comments', async (req, res) => {
 // });
 
 //delete comment
+app.post('/posts/:postId/delete-comment', async (req, res) => {
+  const { postId } = req.params;
+  const { commentId } = req.body; // Retrieve the commentId from the form submission
+
+  console.log("comment id is",{commentId});
+  try {
+    // Delete the comment
+    await Comment.findByIdAndDelete(commentId);
+    
+    //remove from post array
+    const post = await Post.findById(postId);
+    post.post_comments.pull(commentId);
+    await post.save();
+    
+    res.redirect(`/posts/${postId}`);
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 //edit comment
 
 

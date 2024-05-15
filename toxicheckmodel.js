@@ -51,6 +51,7 @@ async function processComments() {
         comment_body: comment.comment_body,
         post_id: comment.post_id,
         comment_user: comment.comment_user,
+        comment_id: comment._id,
         prediction: predictions[index]
     }));
 
