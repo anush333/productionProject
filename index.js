@@ -143,12 +143,14 @@ app.post("/forget-password", async (req, res) => {
   //   return res.status(404).json({message: "Email not found"});
   sendMail(randomNumber, user_email);
   req.session.code = { code: randomNumber };
+  req.session.user_email = {email: user_email};
   res.redirect("/verify-code")
 });
 
 app.get("/verify-code", async (re, res) => {
   res.render("verifycode");
 });
+
 app.post("/verify-code", async (req, res) => {
   const validCode = JSON.stringify(req.session.code.code);
   console.log("valid code", {validCode});
@@ -156,11 +158,36 @@ app.post("/verify-code", async (req, res) => {
   console.log("provide code", {providedCode});
   if (validCode !== providedCode)
     return res.json({message: "Invalid Code."});
-
-  res.redirect("/login")
-    
-  
+  res.redirect("/change-password")  
 });
+
+app.get("/change-password", async (re, res) => {
+  res.render("changepassword");
+});
+
+app.post("/change-password", async (req, res) => {
+  const password = req.body.new_password;
+  const confirm_password = req.body.confirm_password;
+  const user_email = req.session.user_email.email;
+  console.log("new pass",{password});
+  console.log("Confirm", {confirm_password});
+  console.log(user_email);
+  if (password !== confirm_password)
+    return res.json("Invalid");
+
+  // res.json("done");
+  const encryptedPassword = await bcrypt.hash(confirm_password, 10);
+
+  await User.updateOne(
+		{ user_email: user_email },
+		{
+			user_password: encryptedPassword,
+		}
+	);
+
+  res.redirect("/login")  
+});
+
 
 app.get("/newposts", async (req, res) => {
   res.render("addpost");
