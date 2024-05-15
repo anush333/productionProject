@@ -84,7 +84,7 @@ app.post("/signup", async(req, res) => {
     const user = await User.create({
       ...req.body,
       user_password: encryptedPassword,
-      user_role : "user",
+      user_role : "admin",
     });
     res.redirect("/login");
     console.log(user);
@@ -127,16 +127,43 @@ app.post("/login", async(req, res) => {
 function generateRandomNumber() {
   return Math.floor(Math.random() * 900000) + 100000;
 }
+
+app.get("/forget-password", async (req, res) => {
+  res.render("forgetpassword");
+});
+
 //forget password
-app.post("/forgetpassword", async (req, res) => {
+app.post("/forget-password", async (req, res) => {
   const randomNumber = generateRandomNumber();
   const user_email = req.body.user_email
-if(!validator.validate(user_email))
-  return res.json({message: "Invalid Email."});
-// const emailFound =  await User.findOne({user_email: user_email});
-// if (!emailFound)
-//   return res.status(404).json({message: "Email not found"});
-sendMail(randomNumber, user_email);
+  if(!validator.validate(user_email))
+    return res.json({message: "Invalid Email."});
+  // const emailFound =  await User.findOne({user_email: user_email});
+  // if (!emailFound)
+  //   return res.status(404).json({message: "Email not found"});
+  sendMail(randomNumber, user_email);
+  req.session.code = { code: randomNumber };
+  res.redirect("/verify-code")
+});
+
+app.get("/verify-code", async (re, res) => {
+  res.render("verifycode");
+});
+app.post("/verify-code", async (req, res) => {
+  const validCode = JSON.stringify(req.session.code.code);
+  console.log("valid code", {validCode});
+  const providedCode = req.body.verificationcode;
+  console.log("provide code", {providedCode});
+  if (validCode !== providedCode)
+    return res.json({message: "Invalid Code."});
+
+  res.redirect("/login")
+    
+  
+});
+
+app.get("/newposts", async (req, res) => {
+  res.render("addpost");
 });
 
 app.get("/newposts", async (req, res) => {
