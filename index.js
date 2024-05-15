@@ -70,7 +70,7 @@ app.get("/", authMiddleware, async (req, res) => {
 
 //user registration
 app.get("/signup", async(req, res) => {
-
+  res.render("register");
 });
 
 app.post("/signup", async(req, res) => {
@@ -86,7 +86,8 @@ app.post("/signup", async(req, res) => {
       user_password: encryptedPassword,
       user_role : "user",
     });
-    res.json(user);
+    res.redirect("/login");
+    console.log(user);
   } catch (error){
     res.json({message: error});
   }
