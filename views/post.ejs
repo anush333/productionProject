@@ -1,0 +1,29 @@
+<%- include("partials/header"); -%>
+
+<div class="container">
+    <h1><%= post.post_title %></h1>
+    <p><%= post.post_body %></p>
+    
+    <hr> 
+    <h3>Comments</h3>
+    <form action="/post/<%= post._id %>/comments" method="POST" class="comment-form">
+        <textarea class="form-control" name="comment_body" placeholder="Leave a comment here" rows="4"></textarea>
+        <button class="btn btn-primary">Post Comment</button>
+    </form>
+
+   
+    <div class="comments">
+      <% if (post.post_comments) { %>
+        <% post.post_comments.forEach(comment => { %>
+          <div class="<%= getCommentClass(comment.prediction) %>">
+            <p class="comment-user"><strong><%= comment.comment_user %>:</strong></p>
+            <p><%= comment.comment_body %> (Prediction: <%= formatPredictions(comment.prediction) %>)</p>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <p>No comments yet.</p>
+      <% } %>
+    </div>
+</div>
+
+<%- include("partials/footer"); -%>
