@@ -1,18 +1,20 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const postSchema = {
-    post_title: {
-        type: String,
-    },
-    post_body: {
-        type: String,
-    },
-    post_comments: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment"
-    }]
-};
+const postSchema = new mongoose.Schema({
+  post_title: {
+    type: String,
+    required: true
+  },
+  post_body: {
+    type: String,
+    required: true
+  },
+  post_comments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  }]
+});
 
-const Post = mongoose.model("Post", postSchema);
+const Post = mongoose.model('Post', postSchema);
 
 export default Post;

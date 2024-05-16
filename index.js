@@ -374,13 +374,22 @@ app.post("/posts/:id", async (req, res) => {
   }
 });
 
+
 //delete post
-app.post("/delete/:id", async (req, res) => {
+app.post('/delete/:id', async (req, res) => {
   try {
-    await Post.deleteOne( { _id: req.params.id } );
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).send('Post not found');
+    }
+    await Comment.deleteMany({ post_id: post._id });
+
+    await Post.findByIdAndDelete(post._id);
+
     res.redirect('/');
   } catch (error) {
-    console.log(error);
+    console.error('Error deleting post:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
