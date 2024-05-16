@@ -1,12 +1,5 @@
 <%- include("partials/header"); -%>
 
-<% if (role === 'admin') { %>
-  <p>Welcome, Admin!.</p>
-<% } else { %>
-  <p>Welcome, User!.</p>
-<% } %>
-
-
 <div class="container">
     <h1><%= post.post_title %></h1>
     <p><%= post.post_body %></p>
@@ -15,7 +8,7 @@
     <h3>Comments</h3>
     <form action="/post/<%= post._id %>/comments" method="POST" class="comment-form">
         <textarea class="form-control" name="comment_body" placeholder="Leave a comment here" rows="4"></textarea>
-        <button class="btn btn-primary">Post Comment</button>
+        <button class="btn-post-comment btn-primary">Post Comment</button>
     </form>
 
     <div class="comments">

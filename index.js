@@ -45,7 +45,8 @@ const authMiddleware = (req, res, next ) => {
   const token = req.cookies.token;
 
   if(!token) {
-    return res.status(401).json( { message: 'Unauthorized'} );
+    // return res.status(401).json( { message: 'Unauthorized'} );
+    return res.redirect("/login");
   }
 
   try {
@@ -60,8 +61,9 @@ const authMiddleware = (req, res, next ) => {
 app.get("/", authMiddleware, async (req, res) => {
   try {
     const posts = await Post.find({});
+    const name = req.session.user.name
     const role = req.session.user.role
-    res.render("home", { posts: posts, role: role });
+    res.render("home", { posts: posts, role: role, name: name});
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -106,10 +108,10 @@ app.post("/login", async(req, res) => {
     const user_password = req.body.user_password
     const validUser = await User.findOne({ user_email: user_email });
   if (!validUser) {
-    return res.status(400).json({ message: "User not found." });
+    return res.status(400).json({ message: "Invalid Credentials." });
   }
   if (!(await bcrypt.compare(user_password, validUser.user_password))) {
-    res.json({ message: "Please enter a valid password." });
+    return res.json({ message: "Invalid Credentials." });
   }
 
   // const accessToken = jwt.sign(

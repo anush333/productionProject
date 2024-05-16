@@ -2,16 +2,14 @@
 
 <h1>Home</h1>
 
-<% if (role === 'admin') { %>
-  <p>Welcome, Admin!.</p>
-<% } else { %>
-  <p>Welcome, User!.</p>
-<% } %>
+
+<p>Welcome, <%= name %>!</p>
+
 
 <% posts.forEach(function(post){ %>
   <h2><%= post.post_title %></h2>
   <p>
-    <%= post.post_body.substring(0, 100) + "..." %>
+    <%= post.post_body.substring(0, 150) + "..." %>
     <a href="/posts/<%= post._id %>">Read More</a> 
   </p>
   <% if (role === "admin") { %>

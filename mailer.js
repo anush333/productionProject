@@ -18,14 +18,18 @@ export default async function sendMail(verificationCode, receiver) {
       to: receiver,
       subject: "Your verification code!",
       html: `
-            <div style="font-family: Arial, sans-serif;">
-                <h2 style="color: #333;">Password Reset Verification</h2>
-                <p>We have received a request to reset the password for your account.</p>
-                <p>To ensure the security of your account, please use the following verification code to proceed with the password reset process:</p>
-                <h3 style="color: #007bff;">Verification Code: ${verificationCode}</h3>
-                <p>Once you receive this email, please enter the verification code on our password reset page.</p>
-                <p>Thank you!</p>
-            </div>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+      <h2 style="color: #333;">Password Reset Verification</h2>
+      <p>We have received a request to reset the password for your account.</p>
+      <p>Use the code given below to reset your password</p>
+      <div style="text-align: center; margin: 15px 0;">
+          <p style="font-size: 24px; font-weight: bold; color: #007bff; background-color: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 4px; display: inline-block;">
+              ${verificationCode}
+          </p>
+      </div>
+      <p>If you did not request this code, it is possible that someone else is trying to access your account. Do not forward or give this code to anyone.</p>
+      <p>Thank you!</p>
+  </div>
         `,
     });
    
