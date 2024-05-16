@@ -166,6 +166,7 @@ app.get("/change-password", async (re, res) => {
   res.render("changepassword");
 });
 
+// change password
 app.post("/change-password", async (req, res) => {
   const password = req.body.new_password;
   const confirm_password = req.body.confirm_password;
@@ -189,6 +190,12 @@ app.post("/change-password", async (req, res) => {
   res.redirect("/login")  
 });
 
+// logout
+app.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  //res.json({ message: 'Logout successful.'});
+  res.redirect('/login');
+});
 
 app.get("/newposts", async (req, res) => {
   res.render("addpost");
