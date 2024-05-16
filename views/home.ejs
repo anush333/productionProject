@@ -9,8 +9,15 @@
     <a href="/posts/<%= post._id %>">Read More</a> 
   </p>
   <div class="edit-delete">
-    <a class="edit" href="/posts/<%= post._id %>/edit">Edit</a>
-    <a class="delete" href="/delete/<%= post._id %>">Delete</a>
+     <!-- Edit button form -->
+    <form action="/posts/<%= post._id %>/edit" method="GET" style="display: inline;">
+      <button type="submit" class="btn edit">Edit</button>
+    </form>
+    <!-- Delete button form -->
+    <form action="/delete/<%= post._id %>" method="POST" style="display: inline;">
+      <input type="hidden" name="_method" value="DELETE">
+      <button type="submit" class="btn delete">Delete</button>
+    </form>
   </div>
   <hr>
 <% }) %>

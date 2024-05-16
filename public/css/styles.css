@@ -80,38 +80,44 @@ html {
 }
 .edit-delete {
   display: flex;
-  justify-content: flex-end; /* Aligns items to the right */
+  justify-content: flex-start; /* Aligns items to the right */
   margin-top: 5px; /* Adds some spacing above the button links */
+  width: 5px;
 }
 
-a.edit, a.delete {
-  display: inline-block;
-  margin-left: 10px; /* Space between Edit and Delete */
-  padding: 5px 10px;
+.btn {
   text-decoration: none;
-  color: white;
+  color: #fff;
+  padding: 5px 5px;
+  font-size: 0.9em;
+  border: none;
   border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-a.read-more {
-  background-color: #007bff;
-  padding: 5px 10px;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-}
-
-a.edit {
+.edit {
   background-color: #ffc107; /* Yellow background for Edit */
+  
 }
 
-a.delete {
+.delete {
   background-color: #dc3545; /* Red background for Delete */
+  margin-left: 10px;
 }
 
-a.edit:hover, a.delete:hover, a.read-more:hover {
-  opacity: 0.8; /* Provides a visual feedback on hover */
+.edit:hover, .delete:hover {
+  opacity: 0.8; 
 }
+
+.read-more {
+  background-color: #007bff;
+}
+
+.read-more:hover {
+  background-color: #0056b3;
+}
+
 
 
 /* a.edit,
