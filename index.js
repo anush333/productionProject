@@ -60,7 +60,8 @@ const authMiddleware = (req, res, next ) => {
 app.get("/", authMiddleware, async (req, res) => {
   try {
     const posts = await Post.find({});
-    res.render("home", { posts: posts });
+    const role = req.session.user.role
+    res.render("home", { posts: posts, role: role });
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -117,7 +118,7 @@ app.post("/login", async(req, res) => {
   //   { expiresIn: "10m" }
   // );
   const token = jwt.sign({ userId: validUser._id}, process.env.ACCESS_TOKEN_SECRET);
-  req.session.user = { id: validUser._id, name: validUser.user_name }; // Store user info in session
+  req.session.user = { id: validUser._id, name: validUser.user_name ,role: validUser.user_role}; // Store user info in session
   res.cookie('token', token, { httpOnly: true });
   // res.cookie('token', accessToken, { httpOnly: true });
   // res.json({ accessToken: accessToken });
@@ -282,6 +283,7 @@ function formatPredictions(predictions) {
 app.get('/posts/:postId', async (req, res) => {
   try {
     const postId = req.params.postId;
+    const role = req.session.user.role
     // const post = await Post.findById(postId).lean(); // Fetch the post
     const post = await Post.findById(postId).populate({
       path: 'post_comments',
@@ -307,6 +309,7 @@ app.get('/posts/:postId', async (req, res) => {
     // console.log(post.post_comment)
     res.render('post', {
       post,
+      role,
       getCommentClass, 
       formatPredictions 
     }); 

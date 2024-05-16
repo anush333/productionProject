@@ -1,5 +1,12 @@
 <%- include("partials/header"); -%>
 
+<% if (role === 'admin') { %>
+  <p>Welcome, Admin!.</p>
+<% } else { %>
+  <p>Welcome, User!.</p>
+<% } %>
+
+
 <div class="container">
     <h1><%= post.post_title %></h1>
     <p><%= post.post_body %></p>
@@ -18,12 +25,13 @@
             <p class="comment-user"><strong><%= comment.comment_user %>:</strong></p>
             <p><%= comment.comment_body %> (Prediction: <%= formatPredictions(comment.prediction) %>)</p>
             <!-- Form to delete comment -->
-            <p class="comment-user"><strong><%= comment.comment_id %>: comment id</strong></p>
-            <form action="/posts/<%= post._id %>/delete-comment" method="POST">
-              <!-- Hidden input for commentId -->
-              <input type="hidden" name="commentId" value="<%= comment.comment_id %>">
-              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-            </form>         
+            <% if (role === "admin") { %>
+              <form action="/posts/<%= post._id %>/delete-comment" method="POST">
+                <!-- Hidden input for commentId -->
+                <input type="hidden" name="commentId" value="<%= comment.comment_id %>">
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+              </form>  
+            <% } %>        
           </div>
         <% }); %>
       <% } else { %>
