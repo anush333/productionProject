@@ -58,6 +58,19 @@ const authMiddleware = (req, res, next ) => {
   }
 }
 
+const passwordResetFlowMiddleware = (req, res, next) => {
+  if (!req.session.user_email && req.path !== '/forget-password') {
+    return res.redirect('/forget-password');
+  } 
+  if (req.path === '/verify-code' && !req.session.code) {
+    return res.redirect('/forget-password');
+  }
+  if (req.path === '/change-password' && (!req.session.code || !req.session.user_email)) {
+    return res.redirect('/forget-password');
+  }
+  next();
+}
+
 app.get("/", authMiddleware, async (req, res) => {
   try {
     const posts = await Post.find({});
@@ -150,11 +163,11 @@ app.post("/forget-password", async (req, res) => {
   res.redirect("/verify-code")
 });
 
-app.get("/verify-code", async (re, res) => {
+app.get("/verify-code", passwordResetFlowMiddleware, async (re, res) => {
   res.render("verifycode");
 });
 
-app.post("/verify-code", async (req, res) => {
+app.post("/verify-code", passwordResetFlowMiddleware, async (req, res) => {
   const validCode = JSON.stringify(req.session.code.code);
   console.log("valid code", {validCode});
   const providedCode = req.body.verificationcode;
@@ -164,12 +177,12 @@ app.post("/verify-code", async (req, res) => {
   res.redirect("/change-password")  
 });
 
-app.get("/change-password", async (re, res) => {
+app.get("/change-password", passwordResetFlowMiddleware, async (re, res) => {
   res.render("changepassword");
 });
 
 // change password
-app.post("/change-password", async (req, res) => {
+app.post("/change-password", passwordResetFlowMiddleware, async (req, res) => {
   const password = req.body.new_password;
   const confirm_password = req.body.confirm_password;
   const user_email = req.session.user_email.email;

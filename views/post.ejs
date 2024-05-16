@@ -22,7 +22,7 @@
               <form action="/posts/<%= post._id %>/delete-comment" method="POST">
                 <!-- Hidden input for commentId -->
                 <input type="hidden" name="commentId" value="<%= comment.comment_id %>">
-                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                <button type="submit" class="delete-button">Remove</button>
               </form>  
             <% } %>        
           </div>
