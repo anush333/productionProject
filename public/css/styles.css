@@ -298,6 +298,12 @@ background: #eee;
   flex-grow: 2; 
 }
 
+/* Specific adjustments for the image container */
+.register-img-div {
+  flex-grow: 1;
+  padding-bottom: 10px;
+}
+
 /* Adjustments for the form container */
 .col-xl-4 {
   margin-right: auto; /* Align the form to the left */

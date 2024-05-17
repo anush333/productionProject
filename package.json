@@ -27,6 +27,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.3",
     "natural": "^7.0.5",
-    "nodemailer": "^6.9.13"
+    "nodemailer": "^6.9.13",
+    "toastr": "^2.1.4"
   }
 }

@@ -16,8 +16,7 @@ import MongoStore from "connect-mongo";
 import processComments from './toxicheckmodel.js'; 
 
 
-import * as tf from '@tensorflow/tfjs';
-import fs from 'fs';
+
 
 const app = express();
 app.use(cors());
@@ -40,6 +39,14 @@ app.use(session({
 
 app.use(express.static("public"));
 app.use(express.static("images"));
+
+app.use((req, res, next) => {
+  res.locals.success_msg = req.session.success_msg || null;
+  res.locals.error_msg = req.session.error_msg || null;
+  delete req.session.success_msg;
+  delete req.session.error_msg;
+  next();
+});
 
 const authMiddleware = (req, res, next ) => {
   const token = req.cookies.token;
@@ -89,55 +96,78 @@ app.get("/signup", async(req, res) => {
   res.render("register");
 });
 
-app.post("/signup", async(req, res) => {
-  const {user_name, user_email, user_password} = req.body;
-  try{
-    if ( user_name === "" || user_email === "" || user_password === "")
-      return res.status(400).json({message: "Enter value for all fields."});
-    if(!validator.validate(user_email))
-      return res.json({message: "Invalid Email."});
+
+app.post("/signup", async (req, res) => {
+  const { user_name, user_email, user_password } = req.body;
+  try {
+    if (user_name === "" || user_email === "" || user_password === "")
+      throw new Error("Enter value for all fields.");
+    if (!validator.validate(user_email))
+      throw new Error("Invalid Email.");
+
     const encryptedPassword = await bcrypt.hash(user_password, 10);
     const user = await User.create({
       ...req.body,
       user_password: encryptedPassword,
-      user_role : "admin",
+      user_role: "admin",
     });
+    req.session.success_msg = "Registration successful. Please log in.";
     res.redirect("/login");
-    console.log(user);
-  } catch (error){
-    res.json({message: error});
+  } catch (error) {
+    req.session.error_msg = error.message;
+    res.redirect("/signup");
   }
 });
-
-
 
 //user login
 app.get("/login", async(req, res) => {
   res.render("login");
 });
 
-app.post("/login", async(req, res) => {
-    const user_email = req.body.user_email
-    const user_password = req.body.user_password
-    const validUser = await User.findOne({ user_email: user_email });
-  if (!validUser) {
-    return res.status(400).json({ message: "Invalid Credentials." });
-  }
-  if (!(await bcrypt.compare(user_password, validUser.user_password))) {
-    return res.json({ message: "Invalid Credentials." });
-  }
+// app.post("/login", async(req, res) => {
+//     const user_email = req.body.user_email
+//     const user_password = req.body.user_password
+//     const validUser = await User.findOne({ user_email: user_email });
+//   if (!validUser) {
+//     return res.status(400).json({ message: "Invalid Credentials." });
+//   }
+//   if (!(await bcrypt.compare(user_password, validUser.user_password))) {
+//     return res.json({ message: "Invalid Credentials." });
+//   }
 
-  // const accessToken = jwt.sign(
-  //   { user_email: user_email },
-  //   process.env.ACCESS_TOKEN_SECRET,
-  //   { expiresIn: "10m" }
-  // );
-  const token = jwt.sign({ userId: validUser._id}, process.env.ACCESS_TOKEN_SECRET);
-  req.session.user = { id: validUser._id, name: validUser.user_name ,role: validUser.user_role}; // Store user info in session
-  res.cookie('token', token, { httpOnly: true });
-  // res.cookie('token', accessToken, { httpOnly: true });
-  // res.json({ accessToken: accessToken });
-  res.redirect("/");
+//   // const accessToken = jwt.sign(
+//   //   { user_email: user_email },
+//   //   process.env.ACCESS_TOKEN_SECRET,
+//   //   { expiresIn: "10m" }
+//   // );
+//   const token = jwt.sign({ userId: validUser._id}, process.env.ACCESS_TOKEN_SECRET);
+//   req.session.user = { id: validUser._id, name: validUser.user_name ,role: validUser.user_role}; // Store user info in session
+//   res.cookie('token', token, { httpOnly: true });
+//   // res.cookie('token', accessToken, { httpOnly: true });
+//   // res.json({ accessToken: accessToken });
+//   req.session.success_msg = "Registration successful. Please log in.";
+//   res.redirect("/");
+// });
+
+app.post("/login", async (req, res) => {
+  const { user_email, user_password } = req.body;
+  try {
+    const validUser = await User.findOne({ user_email: user_email });
+    if (!validUser || !(await bcrypt.compare(user_password, validUser.user_password))) {
+      throw new Error("Invalid Credentials.");
+    }
+
+    const token = jwt.sign({ userId: validUser._id }, process.env.ACCESS_TOKEN_SECRET);
+    req.session.user = { id: validUser._id, name: validUser.user_name, role: validUser.user_role };
+    res.cookie('token', token, { httpOnly: true });
+    req.session.success_msg = "Login successful.";
+    console.log(req.session.success_msg)
+    res.redirect("/");
+  } catch (error) {
+    req.session.error_msg = error.message;
+    console.log(req.session.error_msg)
+    res.redirect("/login");
+  }
 });
 
 function generateRandomNumber() {
