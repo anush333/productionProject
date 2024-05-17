@@ -168,6 +168,24 @@ li:last-child {
     padding-bottom: 70px;
 }
 
+.logout-container{
+  text-align: right;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: #53536e;
+}
+
+.logout-link {
+  color: #72c6ff; /* Black color for the logout link */
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.logout-link:hover {
+  color: #1abc9c; /* Change color on hover */
+}
+
 .navbar {
   padding-top: 0px; 
   padding-bottom: 0px; 
@@ -188,8 +206,8 @@ li:last-child {
 .navbar-brand {
   color: white !important;
   padding-top: 5px; 
-  padding-bottom: 5px; 
-  /* margin-top: px;  */
+  padding-bottom: 5px;  
+  font-size: 30px;
 }
 
 .navbar-right {
@@ -207,6 +225,16 @@ li:last-child {
     color: #1abc9c !important;
 }
 
+.navbar-nav .separator {
+  border-left: 1px solid white;
+  height: 40px;
+  margin-top: 27px;
+}
+
+#addpost{
+  font-size: 16px;
+  padding-left: 10px;
+}
 /* a.edit {
   background-color: #007bff;
   
@@ -258,26 +286,25 @@ background: #eee;
 
 /* Flex properties for image and form columns */
 .col-xl-5, .col-xl-4 {
-  flex: 1; /* Allow each column to take equal space */
   display: flex;
   justify-content: center; /* Center horizontally within each column */
   align-items: center; /* Center vertically */
   padding: 30px; /* Adds padding around the content for better spacing */
 }
 
+
 /* Specific adjustments for the image container */
 .col-xl-5 {
   flex-grow: 2; 
-  
 }
 
-/* Specific adjustments for the form container */
+/* Adjustments for the form container */
 .col-xl-4 {
-  flex-grow: 3; 
+  margin-right: auto; /* Align the form to the left */
+  flex-grow: 0; /* Ensure the form doesn't grow to fill space */
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
-
 
 
 /* Button styling */
