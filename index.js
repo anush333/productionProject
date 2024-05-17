@@ -16,12 +16,9 @@ import MongoStore from "connect-mongo";
 import processComments from './toxicheckmodel.js'; 
 
 
-
-
 const app = express();
 app.use(cors());
 mongoose.connect(process.env.URL).then(console.log("Connected!"));
-
 
 
 app.set('view engine', 'ejs');
@@ -52,7 +49,6 @@ const authMiddleware = (req, res, next ) => {
   const token = req.cookies.token;
 
   if(!token) {
-    // return res.status(401).json( { message: 'Unauthorized'} );
     return res.redirect("/login");
   }
 
@@ -85,8 +81,8 @@ app.get("/", authMiddleware, async (req, res) => {
     const role = req.session.user.role
     res.render("home", { posts: posts, role: role, name: name});
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal Server Error");
+    req.session.error_msg = "Internal Server Error";
+    res.redirect("/");
   }
 });
 
@@ -124,30 +120,7 @@ app.get("/login", async(req, res) => {
   res.render("login");
 });
 
-// app.post("/login", async(req, res) => {
-//     const user_email = req.body.user_email
-//     const user_password = req.body.user_password
-//     const validUser = await User.findOne({ user_email: user_email });
-//   if (!validUser) {
-//     return res.status(400).json({ message: "Invalid Credentials." });
-//   }
-//   if (!(await bcrypt.compare(user_password, validUser.user_password))) {
-//     return res.json({ message: "Invalid Credentials." });
-//   }
 
-//   // const accessToken = jwt.sign(
-//   //   { user_email: user_email },
-//   //   process.env.ACCESS_TOKEN_SECRET,
-//   //   { expiresIn: "10m" }
-//   // );
-//   const token = jwt.sign({ userId: validUser._id}, process.env.ACCESS_TOKEN_SECRET);
-//   req.session.user = { id: validUser._id, name: validUser.user_name ,role: validUser.user_role}; // Store user info in session
-//   res.cookie('token', token, { httpOnly: true });
-//   // res.cookie('token', accessToken, { httpOnly: true });
-//   // res.json({ accessToken: accessToken });
-//   req.session.success_msg = "Registration successful. Please log in.";
-//   res.redirect("/");
-// });
 
 app.post("/login", async (req, res) => {
   const { user_email, user_password } = req.body;
@@ -180,17 +153,28 @@ app.get("/forget-password", async (req, res) => {
 
 //forget password
 app.post("/forget-password", async (req, res) => {
-  const randomNumber = generateRandomNumber();
-  const user_email = req.body.user_email
-  if(!validator.validate(user_email))
-    return res.json({message: "Invalid Email."});
-  // const emailFound =  await User.findOne({user_email: user_email});
-  // if (!emailFound)
-  //   return res.status(404).json({message: "Email not found"});
-  sendMail(randomNumber, user_email);
-  req.session.code = { code: randomNumber };
-  req.session.user_email = {email: user_email};
-  res.redirect("/verify-code")
+  try {
+    const randomNumber = generateRandomNumber();
+    const user_email = req.body.user_email;
+
+    if (!validator.validate(user_email)) {
+      throw new Error("Invalid Email.");
+    }
+
+    const emailFound = await User.findOne({ user_email: user_email });
+    if (!emailFound) {
+      throw new Error("Email not found");
+    }
+
+    await sendMail(randomNumber, user_email);
+    req.session.code = { code: randomNumber };
+    req.session.user_email = { email: user_email };
+    req.session.success_msg = "Email sent successfully.";
+    res.redirect("/verify-code");
+  } catch (error) {
+    req.session.error_msg = error.message;
+    res.redirect("/forget-password");
+  }
 });
 
 app.get("/verify-code", passwordResetFlowMiddleware, async (re, res) => {
@@ -198,14 +182,23 @@ app.get("/verify-code", passwordResetFlowMiddleware, async (re, res) => {
 });
 
 app.post("/verify-code", passwordResetFlowMiddleware, async (req, res) => {
-  const validCode = JSON.stringify(req.session.code.code);
-  console.log("valid code", {validCode});
-  const providedCode = req.body.verificationcode;
-  console.log("provide code", {providedCode});
-  if (validCode !== providedCode)
-    return res.json({message: "Invalid Code."});
-  res.redirect("/change-password")  
+  try {
+    const validCode = JSON.stringify(req.session.code.code);
+    console.log("Valid code:", { validCode });
+
+    const providedCode = req.body.verificationcode;
+
+    if (validCode !== providedCode) {
+      throw new Error("Invalid Code.");
+    }
+
+    res.redirect("/change-password");
+  } catch (error) {
+    req.session.error_msg = error.message;
+    res.redirect("/verify-code");
+  }
 });
+
 
 app.get("/change-password", passwordResetFlowMiddleware, async (re, res) => {
   res.render("changepassword");
@@ -213,32 +206,38 @@ app.get("/change-password", passwordResetFlowMiddleware, async (re, res) => {
 
 // change password
 app.post("/change-password", passwordResetFlowMiddleware, async (req, res) => {
-  const password = req.body.new_password;
-  const confirm_password = req.body.confirm_password;
-  const user_email = req.session.user_email.email;
-  console.log("new pass",{password});
-  console.log("Confirm", {confirm_password});
-  console.log(user_email);
-  if (password !== confirm_password)
-    return res.json("Invalid");
+  try {
+    const password = req.body.new_password;
+    const confirm_password = req.body.confirm_password;
+    const user_email = req.session.user_email.email;
+    console.log("new pass",{password});
+    console.log("Confirm", {confirm_password});
+    console.log(user_email);
+    if (password !== confirm_password)
+      throw new Error("Passwords do not match");
 
-  // res.json("done");
-  const encryptedPassword = await bcrypt.hash(confirm_password, 10);
+    // res.json("done");
+    const encryptedPassword = await bcrypt.hash(confirm_password, 10);
 
-  await User.updateOne(
-		{ user_email: user_email },
-		{
-			user_password: encryptedPassword,
-		}
+    await User.updateOne(
+		  { user_email: user_email },
+		  {
+			  user_password: encryptedPassword,
+		  }
 	);
-
-  res.redirect("/login")  
+  req.session.success_msg = "Password changed successfully.";
+  res.redirect("/login") 
+} catch (error) {
+  req.session.error_msg = error.message;
+  res.redirect("/login");
+}
+   
 });
 
 // logout
 app.get('/logout', (req, res) => {
   res.clearCookie('token');
-  //res.json({ message: 'Logout successful.'});
+  req.session.success_msg = "Loged Out successfully.";
   res.redirect('/login');
 });
 
@@ -256,66 +255,10 @@ app.post("/newposts", async (req, res) => {
         post_title: req.body.post_title,
         post_body: req.body.post_body,
     });
-    console.log(post);
+    //console.log(post);
+    req.session.success_msg = "New Post Created.";
     res.redirect("/");
 });
-
-// select specific post
-// app.get("/posts/:postId", async(req, res) => {
-//     // const requestedPostId = req.params.postId;
-//     //  const getPost = await Post.findOne({_id: requestedPostId}).exec();
-//     // res.json(getPost);
-//       try {
-//         const requestedPostId = req.params.postId;
-//         // const post = await Post.findOne({_id: requestedPostId}).exec();
-//         const post = await Post.findOne({_id: requestedPostId}).populate('post_comments').exec();
-
-    
-//         if (!post) {
-//           return res.status(404).send("Post not found");
-//         }
-//         res.render("post", {
-//           // post_title: post.post_title,
-//           // post_body: post.post_body
-//            post: post 
-//         });
-//       } catch (err) {
-//         console.error(err);
-//         res.status(500).send("Internal Server Error");
-//       }
-//   });
-
-// app.get("/posts/:postId", async (req, res) => {
-//   try {
-//     const requestedPostId = req.params.postId;
-
-//     // Fetch the post along with its comments populated
-//     const post = await Post.findOne({_id: requestedPostId}).populate('post_comments').exec();
-//     if (!post) {
-//       return res.status(404).send("Post not found");
-//     }
-
-//     // Process comments through the prediction model, assuming processComments is set up to update comments directly
-//     const processedComments = await processComments(post.post_comments.map(comment => comment.comment_body));
-//     console.log("Processed Comments with Predictions:", processedComments); // Log processed comments with predictions
-
-
-//   // Append predictions to each comment correctly
-//   post.post_comments.forEach((comment, index) => {
-//   comment.prediction = processedComments[index].prediction;  // Ensure predictions are attached properly
-// });
-
-// console.log("Updated Comments with Predictions:", post.post_comments);  // Log to confirm predictions are attached
-
-
-//     // Render the post with updated comments
-//     res.render("post", { post: post });
-//   } catch (err) {
-//     console.error("Error fetching the post: ", err);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
-
 
 function getCommentClass(predictions) {
   const classes = [];
@@ -331,7 +274,7 @@ function formatPredictions(predictions) {
   return predictions.map(pred => pred.toFixed(2)).join(', '); // Format for display
 }
 
-// new get post
+//get specific post
 app.get('/posts/:postId', async (req, res) => {
   try {
     const postId = req.params.postId;
@@ -343,8 +286,7 @@ app.get('/posts/:postId', async (req, res) => {
     }).lean();
 
     if (!post) {
-      res.status(404).send('Post not found');
-      return;
+      throw new Error('Post not found');
     }
 
     console.log("Fetched comments: ", JSON.stringify(post.post_comments, null, 2));
@@ -367,8 +309,8 @@ app.get('/posts/:postId', async (req, res) => {
     }); 
 
   } catch (error) {
-    console.error('Error fetching post and comments:', error);
-    res.status(500).send('Error fetching data');
+    req.session.error_msg = error.message;
+    res.redirect("/");
   }
 });
 
@@ -384,48 +326,30 @@ app.get("/posts/:postId/edit", async(req, res) => {
         const post = await Post.findOne({_id: requestedPostId}).exec();
 
         if (!post) {
-            return res.status(404).send("Post not found");
+          throw new Error("Post not found");
         }      
         res.render("edit", { post });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Internal Server Error");
+    } catch (error) {
+      req.session.error_msg = error.message;
+      res.redirect("/");
     }
 })
 
 // // edit post
-// app.patch("/posts/:id", async (req, res) => {
-//   const id = req.params.id;
-//   const update = req.body;
-//   try {
-//     const updatedPost = await Post.findByIdAndUpdate(id, update, { new: true });
-//     res.json(updatedPost);
-//     console.log(updatedPost.post_title);
-//     res.redirect("/")
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-  
-// });
-
 app.post("/posts/:id", async (req, res) => {
   const postId = req.params.id;
   const { title, content } = req.body;
-
   try {
-    // Find the post by ID and update its title and content
     await Post.findByIdAndUpdate(
       postId,
       { post_title: title, post_body: content },
       { new: true }
     );
-
-    
+    req.session.success_msg = "Post has been edited.";
     res.redirect("/");
   } catch (error) {
-    
-    console.error("Error updating post:", error);
-    res.status(500).send("Internal Server Error");
+    req.session.error_msg = error.message;
+    res.redirect("/")
   }
 });
 
@@ -435,69 +359,20 @@ app.post('/delete/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).send('Post not found');
+      throw new Error('Post not found');
     }
     await Comment.deleteMany({ post_id: post._id });
 
     await Post.findByIdAndDelete(post._id);
-
+    req.session.success_msg = "Post has been deleted.";
     res.redirect('/');
   } catch (error) {
-    console.error('Error deleting post:', error);
-    res.status(500).send('Internal Server Error');
+    req.session.error_msg = error.message;
+    res.redirect("/");
   }
 });
 
-// app.delete('/post/:postId', async (req, res) => {
-//   const postId = req.params.postId;
-
-//   try {
-//       await Post.findByIdAndRemove(postId);
-//       await Comment.deleteMany({ post_id: postId });  // Remove all comments associated with the post
-
-//       res.send('Post and related comments deleted successfully');
-//   } catch (error) {
-//       console.error('Error deleting post and comments:', error);
-//       res.status(500).send('Internal Server Error');
-//   }
-// });
-
-
 //add comment
-// app.post("/posts/:id/comments", async (req, res) => {
-//   const post = await Comment.create({
-//       comment_body: req.body.comment_body,
-//       comment_user: req.body.comment_user,
-//   });
-//   await Post.findById(req.params.id).exec()
-//   res.json(post);
-// });
-
-// app.post("/post/:id/comments", async (req, res) => {
-//   try {
-//     // Create a new comment
-//     const comment = await Comment.create({
-//       comment_body: req.body.comment_body,
-//     });
-
-//     // Find the post by id
-//     const post = await Post.findById(req.params.id);
-
-//     // Push the created comment to the post's comments array
-//     post.post_comments.push(comment);
-
-//     // Save the updated post
-//     await post.save();
-
-//     // Send the updated post as a respon
-//     res.redirect("/")
-    
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'An error occurred' });
-//   }
-// });
-
 app.post('/post/:postId/comments', async (req, res) => {
   const { comment_body} = req.body;
   const postId = req.params.postId;
@@ -507,99 +382,35 @@ app.post('/post/:postId/comments', async (req, res) => {
   try {
     // Create a new comment
     const comment = await Comment.create({ comment_body, post_id: postId, comment_user: req.session.user.name});
-
     
     const post = await Post.findById(postId);
-
-    
     post.post_comments.push(comment._id);  
-
-    // Save the updated post
     await post.save();
-
-    // res.redirect(`/post/${postId}`);
-
+    req.session.success_msg = "Comment added successful.";
     res.redirect(`/posts/${postId}`);
   } catch (error) {
-    console.error('Error posting comment:', error);
-    res.status(500).send('Internal Server Error');
+    req.session.error_msg = `Error posting comment: ${error.message}`;
+    res.redirect(`/posts/${postId}`);
   }
 });
-
-
-
-// app.post("/post/:id/comments", async (req, res) => {
-//   try {
-//     // Create a new comment
-//     const comment = await Comment.create({
-//       comment_body: req.body.comment_body,
-//     });
-
-//     // Find the post by id
-//     const post = await Post.findById(req.params.id);
-
-//     // Push the created comment to the post's comments array
-//     post.post_comments.push(comment);
-
-//     // Save the updated post
-//     await post.save();
-
-//     // Send the updated post as a respon
-//     res.redirect("/")
-    
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: 'An error occurred' });
-//   }
-// });
-
-
-// app.post("/posts/:id/comments", async (req, res) => {
-//   const comment = new Comment({
-//     comment_body: req.body.comment_body,
-//     comment_user: "a",
-//   });
-//   comment.save((err, result)=>{
-//     if (err){
-//       console.log(err)
-//     }else{
-//       Post.findById(req.params.id, (err,post) => {
-//         if(err){
-//           console.log(err);
-//         } else{
-//           post.post_comments.push(result);
-//           post.save();
-//           res.json(post);
-//         }
-//       })
-//     }
-//   })
-// });
 
 //delete comment
 app.post('/posts/:postId/delete-comment', async (req, res) => {
   const { postId } = req.params;
-  const { commentId } = req.body; // Retrieve the commentId from the form submission
-
-  console.log("comment id is",{commentId});
+  const { commentId } = req.body; 
   try {
-    // Delete the comment
     await Comment.findByIdAndDelete(commentId);
-    
-    //remove from post array
+
     const post = await Post.findById(postId);
     post.post_comments.pull(commentId);
     await post.save();
-    
+    eq.session.success_msg = "Comment deleted successfully.";
     res.redirect(`/posts/${postId}`);
   } catch (error) {
-    console.error('Error deleting comment:', error);
-    res.status(500).send('Internal Server Error');
+    req.session.error_msg = `Error deleting comment: ${error.message}`;
+    res.redirect(`/posts/${postId}`);
   }
 });
-
-//edit comment
-
 
 app.listen(3000, () => {
   console.log('Server is running at http://localhost:3000');
