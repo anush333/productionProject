@@ -2,21 +2,24 @@
 <h1>Edit</h1>
 
 <form id="editForm" method="POST" action="/posts/<%= post._id %>" enctype="multipart/form-data">
-  <label>Title</label>
-  <input type="text" name="title" value="<%= post.post_title %>" class="post">
-  
-  <label>Body</label>
-  <textarea class="post" name="content" rows="10"><%= post.post_body %></textarea>
-  
-  <label>Current Image</label>
-  <div>
-    <img src="<%= post.post_image %>" width="100" class="img-thumbnail">
+  <div class="form-group">
+    <label>Title</label>
+    <input type="text" name="title" value="<%= post.post_title %>" class="post-new">
+    
+    <label>Body</label>
+    <textarea class="post-new" name="content" rows="10"><%= post.post_body %></textarea>
+    
+    <label>Current Image</label>
+    <div>
+      <img src="/<%= post.post_image %>" width="100" class="img-thumbnail">
+    </div>
+    
+    <label>Upload New Image</label>
+    <input type="file" name="post_image" class="form-control-file custom-file-input">
+    
+    <input type="hidden" name="old_image" value="<%= post.post_image %>">
   </div>
   
-  <label>Upload New Image</label>
-  <input type="file" name="post_image" class="form-control-file custom-file-input">
-  
-  <input type="hidden" name="old_image" value="<%= post.post_image %>">
   
   <button class="full-width" type="submit">Submit</button>
 </form>

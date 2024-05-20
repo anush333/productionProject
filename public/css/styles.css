@@ -93,7 +93,7 @@ h1, h2, h3, h4, h5, h6, .post-title {
 }
 
 .edit {
-  background-color: #c9b821;
+  background-color: #F7B801;
   border: none;
   padding: 10px 15px;
   text-decoration: none;
@@ -105,7 +105,7 @@ h1, h2, h3, h4, h5, h6, .post-title {
 }
 
 .delete {
-  background-color: #c91515;
+  background-color: #D33F49;
   border: none;
   padding: 10px 15px;
   text-decoration: none;
@@ -228,17 +228,17 @@ li:last-child {
   padding-right: 20px;
   padding-top: 5px;
   padding-bottom: 5px;
-  background-color: #53536e;
+  background-color: #66999B;
 }
 
 .logout-link {
-  color: #72c6ff;
+  color: #001514;
   font-size: 15px;
   text-decoration: none;
 }
 
 .logout-link:hover {
-  color: #1abc9c;
+  color: #8E3B46;
 }
 
 .navbar {
