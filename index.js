@@ -13,8 +13,10 @@ import jwt from "jsonwebtoken";
 import cookieParser  from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from "connect-mongo";
-import processComments from './toxicheckmodel.js'; 
-
+import processComments from "./toxicheckmodel.js"; 
+import fs from "fs";
+import multer from "multer";
+import path from 'path';
 
 const app = express();
 app.use(cors());
@@ -80,11 +82,23 @@ app.get("/", authMiddleware, async (req, res) => {
     const name = req.session.user.name
     const role = req.session.user.role
     res.render("home", { posts: posts, role: role, name: name});
-  } catch (err) {
-    req.session.error_msg = "Internal Server Error";
+  } catch (error) {
+    req.session.error_msg = error.message;
     res.redirect("/");
   }
 });
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "images"); 
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage }).single('post_image');
 
 
 //user registration
@@ -206,10 +220,10 @@ app.get("/change-password", passwordResetFlowMiddleware, async (re, res) => {
 
 // change password
 app.post("/change-password", passwordResetFlowMiddleware, async (req, res) => {
+  const password = req.body.new_password;
+  const confirm_password = req.body.confirm_password;
+  const user_email = req.session.user_email.email;
   try {
-    const password = req.body.new_password;
-    const confirm_password = req.body.confirm_password;
-    const user_email = req.session.user_email.email;
     console.log("new pass",{password});
     console.log("Confirm", {confirm_password});
     console.log(user_email);
@@ -245,19 +259,21 @@ app.get("/newposts", async (req, res) => {
   res.render("addpost");
 });
 
-app.get("/newposts", async (req, res) => {
-  res.render("addpost");
-});
-
 //create post
-app.post("/newposts", async (req, res) => {
-    const post = await Post.create({
-        post_title: req.body.post_title,
-        post_body: req.body.post_body,
+app.post("/newposts", upload, async (req, res) => {
+  try {
+    console.log(req.body);
+    console.log(req.file);
+    await Post.create({
+      post_title: req.body.post_title,
+      post_body: req.body.post_body,
+      post_image: req.file.filename,
     });
-    //console.log(post);
     req.session.success_msg = "New Post Created.";
     res.redirect("/");
+  } catch (error) {
+    req.session.error_msg = `Error: ${error.message}`;
+  } 
 });
 
 function getCommentClass(predictions) {
@@ -309,7 +325,7 @@ app.get('/posts/:postId', async (req, res) => {
     }); 
 
   } catch (error) {
-    req.session.error_msg = error.message;
+    req.session.error_msg = `Error: ${error.message}`;
     res.redirect("/");
   }
 });
@@ -330,25 +346,34 @@ app.get("/posts/:postId/edit", async(req, res) => {
         }      
         res.render("edit", { post });
     } catch (error) {
-      req.session.error_msg = error.message;
+      req.session.error_msg = `Error: ${error.message}`;
       res.redirect("/");
     }
 })
 
-// // edit post
-app.post("/posts/:id", async (req, res) => {
+
+app.post("/posts/:id", upload, async (req, res) => {
   const postId = req.params.id;
+  const newImage = req.file ? req.file.filename : req.body.old_image;
   const { title, content } = req.body;
   try {
     await Post.findByIdAndUpdate(
       postId,
-      { post_title: title, post_body: content },
+      { post_title: title, post_body: content, post_image: newImage, },
       { new: true }
     );
+
+    if (req.file) {
+      try {
+        fs.unlinkSync(`images/${req.body.old_image}`);
+      } catch (err) {
+        console.log(err);
+      }
+    }
     req.session.success_msg = "Post has been edited.";
     res.redirect("/");
   } catch (error) {
-    req.session.error_msg = error.message;
+    req.session.error_msg = `Error: ${error.message}`;
     res.redirect("/")
   }
 });
@@ -367,7 +392,7 @@ app.post('/delete/:id', async (req, res) => {
     req.session.success_msg = "Post has been deleted.";
     res.redirect('/');
   } catch (error) {
-    req.session.error_msg = error.message;
+    req.session.error_msg = `Error: ${error.message}`;
     res.redirect("/");
   }
 });
@@ -404,7 +429,7 @@ app.post('/posts/:postId/delete-comment', async (req, res) => {
     const post = await Post.findById(postId);
     post.post_comments.pull(commentId);
     await post.save();
-    eq.session.success_msg = "Comment deleted successfully.";
+    req.session.success_msg = "Comment deleted successfully.";
     res.redirect(`/posts/${postId}`);
   } catch (error) {
     req.session.error_msg = `Error deleting comment: ${error.message}`;

@@ -12,7 +12,11 @@ const postSchema = new mongoose.Schema({
   post_comments: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Comment'
-  }]
+  }],
+  post_image: {
+    type: String,
+    required: true,
+  },
 });
 
 const Post = mongoose.model('Post', postSchema);

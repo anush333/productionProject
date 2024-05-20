@@ -1,14 +1,19 @@
 
 <%- include("partials/header"); -%>
     <h1>Compose</h1>
-    <form class="" action="/newposts" method="post">
+    <form action="/newposts" method="post" enctype="multipart/form-data">
       <div class="form-group">
         <label>Title</label>
-        <input class="post" type="text" name="post_title">
+        <input class="post" type="text" name="post_title" required>
         <label>Post</label>
-        <textarea class="post" name="post_body" rows="5" cols="30"></textarea>
+        <textarea class="post" name="post_body" rows="5" cols="30" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="image">Select Image</label>
+        <input type="file" name="post_image" class="form-control-file custom-file-input" id="image" required>
       </div>
       <button class="btn btn-primary" type="submit" name="button">Publish</button>
     </form>
+    
 
 <%- include("partials/footer"); -%>

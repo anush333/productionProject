@@ -2,30 +2,28 @@
 
 <h1>Home</h1>
 
-
 <p>Welcome, <%= name %>!</p>
 
-
-<% posts.forEach(function(post){ %>
+<% posts.forEach(function(post) { %>
   <h2><%= post.post_title %></h2>
+  <h3><img src="<%= post.post_image %>" width="100" class="img-thumbnail"></h3>
   <p>
     <%= post.post_body.substring(0, 150) + "..." %>
-    <a href="/posts/<%= post._id %>">Read More</a> 
+    <a href="/posts/<%= post._id %>">Read More</a>
   </p>
   <% if (role === "admin") { %>
     <div class="edit-delete">
       <!-- Edit button form -->
-     <form action="/posts/<%= post._id %>/edit" method="GET" style="display: inline;">
-       <button type="submit" class="btn edit">Edit</button>
-     </form>
-     <!-- Delete button form -->
-     <form action="/delete/<%= post._id %>" method="POST" style="display: inline;">
-       <input type="hidden" name="_method" value="DELETE">
-       <button type="submit" class="btn delete">Delete</button>
-     </form>
-   </div>
+      <form action="/posts/<%= post._id %>/edit" method="GET" style="display: inline;">
+        <button type="submit" class="btn edit">Edit</button>
+      </form>
+      <!-- Delete button form -->
+      <form action="/delete/<%= post._id %>" method="POST" style="display: inline;">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit" class="btn delete">Delete</button>
+      </form>
+    </div>
   <% } %>
-  
   <hr>
 <% }) %>
 
