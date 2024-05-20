@@ -3,7 +3,121 @@ html {
   position: relative;
 }
 
+body {
+  font-family: 'Bitter', Arial, sans-serif; 
+}
+
+h1, h2, h3, h4, h5, h6, .post-title {
+  font-family: 'Bitter', serif; 
+}
+
+.container {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
 .post {
+  border: 1px solid #ddd;
+  padding: 20px;
+  padding-top: 1px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.post:hover {
+  transform: translateY(-10px);
+}
+
+.post h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.post-title {
+  color: #333;
+  text-decoration: none;
+  font-family: 'Bitter', serif; 
+  font-weight: bold;
+}
+
+.post-image-link {
+  display: block;
+  margin-bottom: 15px;
+  flex-grow: 1;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.post p {
+  font-size: 1em;
+  line-height: 1.5em;
+  color: #666;
+}
+
+.continue-reading {
+  color: #0066cc;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+  display: block;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.continue-reading:hover {
+  text-decoration: underline;
+}
+
+.edit-delete {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.edit {
+  background-color: #c9b821;
+  border: none;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #333;
+  font-size: 0.9em;
+  border-radius: 3px;
+  width: 45%;
+  text-align: center;
+}
+
+.delete {
+  background-color: #c91515;
+  border: none;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #333;
+  font-size: 0.9em;
+  border-radius: 3px;
+  width: 45%;
+  text-align: center;
+}
+
+.edit:hover, .delete:hover {
+  background-color: #ddd;
+}
+
+.post-new {
   margin-bottom: 20px;
   width: 100%;
   padding: 10px;
@@ -18,9 +132,8 @@ html {
   border-color: #007bff;
 }
 
-/* General styles for the form */
 .container-fluid {
-  max-width: 1100px; /* Adjust based on your design */
+  max-width: 1100px;
   margin: auto;
   padding: 20px;
 }
@@ -29,61 +142,49 @@ html {
   height: 100vh;
 }
 
-/* Style for the form fields */
 .form-control {
   border: 1px solid #666;
-  color: black; /* Light text */
-  height: 45px; /* Increased height */
-  font-size: 16px; /* Larger text */
-  padding: 5px 10px; /* Spacing inside the field */
+  color: black;
+  height: 45px;
+  font-size: 16px;
+  padding: 5px 10px;
   width: 500px;
   margin-bottom: 3px;
 }
 
-/* Style for labels and dividers */
 .form-outline {
-  margin-bottom: 20px; /* More space between fields */
+  margin-bottom: 20px;
 }
 
-/* Style for the login button */
 .btn-primary {
-  width: 100%; /* Full-width button */
-  padding: 10px; /* Larger button */
-  background-color: #0056b3; /* Blue background */
+  width: 100%;
+  padding: 10px;
+  background-color: #0056b3;
   margin-top: 20px;
 }
 
 .btn-primary:hover {
-  background-color: #00408d; /* Darker blue on hover */
+  background-color: #00408d;
 }
-
 
 .divider p {
-  color: #aaa; /* Grey color for the divider text */
+  color: #aaa;
 }
 
-/* Style for social media buttons */
 .btn-floating {
-  width: 40px; /* Smaller buttons */
-  height: 40px; /* Square shape */
-  line-height: 40px; /* Center icon vertically */
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
 }
 
-/* Styling the footer */
 .bg-primary {
-  padding: 10px 0; /* Reduce padding */
+  padding: 10px 0;
 }
 
 .post-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.edit-delete {
-  display: flex;
-  justify-content: flex-start; /* Aligns items to the right */
-  margin-top: 5px; /* Adds some spacing above the button links */
-  width: 5px;
 }
 
 .btn {
@@ -96,55 +197,6 @@ html {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
-.edit {
-  background-color: #ffc107; /* Yellow background for Edit */
-  
-}
-
-.delete {
-  background-color: #dc3545; /* Red background for Delete */
-  margin-left: 10px;
-}
-
-.edit:hover, .delete:hover {
-  opacity: 0.8; 
-}
-
-.read-more {
-  background-color: #007bff;
-}
-
-.read-more:hover {
-  background-color: #0056b3;
-}
-
-
-
-/* a.edit,
-a.delete,
-button {
-  text-decoration: none;
-  background-color: #007bff;
-  color: #fff;
-  padding: 10px;
-  font-size: 1em;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-} */
-
-/* button.full-width {
-  display: block;
-  text-align: center;
-  width: 100%;
-} */
-
-
-/* button:hover {
-  background-color: #0056b3;
-} */
 
 ul {
   list-style-type: none;
@@ -159,16 +211,12 @@ li:last-child {
   border-bottom: none;
 }
 
-/* a.delete:hover {
-  background-color: #c0392b;
-} */
-
 .container-fluid {
-    padding-top: 70px;
-    padding-bottom: 70px;
+  padding-top: 70px;
+  padding-bottom: 70px;
 }
 
-.logout-container{
+.logout-container {
   text-align: right;
   padding-right: 20px;
   padding-top: 5px;
@@ -177,18 +225,18 @@ li:last-child {
 }
 
 .logout-link {
-  color: #72c6ff; /* Black color for the logout link */
+  color: #72c6ff;
   font-size: 15px;
   text-decoration: none;
 }
 
 .logout-link:hover {
-  color: #1abc9c; /* Change color on hover */
+  color: #1abc9c;
 }
 
 .navbar {
-  padding-top: 0px; 
-  padding-bottom: 0px; 
+  padding-top: 0px;
+  padding-bottom: 0px;
   border: 0;
   border-radius: 0;
   margin-bottom: 0;
@@ -196,17 +244,14 @@ li:last-child {
   letter-spacing: 5px;
 }
 
-.navbar-default{
+.navbar-default {
   background-color: #0056b3;
 }
- .navbar-brand{
-  color: white !important;
- }
 
 .navbar-brand {
   color: white !important;
-  padding-top: 5px; 
-  padding-bottom: 5px;  
+  padding-top: 5px;
+  padding-bottom: 5px;
   font-size: 30px;
 }
 
@@ -214,15 +259,16 @@ li:last-child {
   margin-top: -30px;
 }
 
-.navbar-nav{
+.navbar-nav {
   padding-top: 0px;
 }
+
 .navbar-nav li a {
-  color: white !important; /* Make the text color white */
+  color: white !important;
 }
 
-.navbar-nav  li a:hover {
-    color: #1abc9c !important;
+.navbar-nav li a:hover {
+  color: #1abc9c !important;
 }
 
 .navbar-nav .separator {
@@ -231,146 +277,131 @@ li:last-child {
   margin-top: 27px;
 }
 
-#addpost{
+#addpost {
   font-size: 16px;
   padding-left: 10px;
 }
-/* a.edit {
-  background-color: #007bff;
-  
-} */
 
-/* a.delete {
-  background-color: #e74c3c;
-} */
 .footer-padding {
   padding-bottom: 60px;
 }
 
 .normal {
-  color: black; /* Normal color */
+  color: black;
 }
+
 .toxic {
-  color: white; /* Color for toxic comments */
+  color: white;
   background-color: #cf5e54;
-  
 }
+
 .severe-toxic {
-  color: darkred; /* Color for severely toxic comments */
+  color: darkred;
 }
+
 .threat {
   background-color: #7b403b;
 }
+
 .insult {
   background-color: #ba6861;
 }
+
 .identity_hate {
   background-color: #ff9999;
 }
 
 .divider:after,
 .divider:before {
-content: "";
-flex: 1;
-height: 1px;
-background: #eee;
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
 }
 
-/* using the full height and centered */
 .h-custom {
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  justify-content: center;
+  align-items: center;
   height: 100vh;
 }
 
-/* Flex properties for image and form columns */
 .col-xl-5, .col-xl-4 {
   display: flex;
-  justify-content: center; /* Center horizontally within each column */
-  align-items: center; /* Center vertically */
-  padding: 30px; /* Adds padding around the content for better spacing */
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
 }
 
-
-/* Specific adjustments for the image container */
 .col-xl-5 {
-  flex-grow: 2; 
+  flex-grow: 1;
 }
 
-/* Specific adjustments for the image container */
 .register-img-div {
   flex-grow: 1;
   padding-bottom: 10px;
 }
 
-/* Adjustments for the form container */
 .col-xl-4 {
-  margin-right: auto; /* Align the form to the left */
-  flex-grow: 0; /* Ensure the form doesn't grow to fill space */
+  margin-right: auto;
+  flex-grow: 0;
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-
-/* Button styling */
 .btn-primary {
-  width: auto; /* Adjust width */
+  width: auto;
   padding: 10px 20px;
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .btn {
-  margin-top: 10px; 
-  width: auto; 
-  padding: 10px 20px; 
+  margin-top: 10px;
+  width: auto;
+  padding: 10px 20px;
 }
 
 .btn-post-comment {
-  margin-top: 3px; 
-  width: auto; 
-  padding: 10px 20px; 
+  margin-top: 3px;
+  width: auto;
+  padding: 10px 20px;
 }
-
 
 .delete-button {
   background: none;
   border: none;
-  color: rgb(177, 171, 171); /* Default text color */
+  color: rgb(177, 171, 171);
   cursor: pointer;
   font-size: 1em;
   padding: 0;
-  text-decoration: underline; 
+  text-decoration: underline;
 }
 
 .delete-button:hover {
-  color: #e62538; /* Red color on hover */
+  color: #e62538;
 }
 
-/* Image styling */
 .img-fluid {
-  max-width: 100%; 
-  height: auto; /* Maintain aspect ratio */
+  max-width: 100%;
+  height: auto;
 }
 
 .comment-user {
   font-weight: bold;
-  margin-bottom: 5px; /* Add space below the username */
+  margin-bottom: 5px;
 }
 
-
 .comments {
-  margin-top: 20px; /* Space between comment form and comments */
+  margin-top: 20px;
 }
 
 .comment {
-  margin-bottom: 15px; /* Space between comments */
+  margin-bottom: 15px;
   padding: 10px;
-  border: 1px solid #ccc; 
+  border: 1px solid #ccc;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
-
 
 hr {
   border: 0;
@@ -381,18 +412,16 @@ hr {
 }
 
 .container {
-  width: 90%; 
-  margin: 0 auto; /* Centers the container */
-  padding: 20px; 
+  width: 90%;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .post, .form-control {
   display: block;
-  width: 100%; 
-  margin-bottom: 5px; 
+  width: 100%;
+  margin-bottom: 5px;
 }
-
-
 
 .footer {
   position: absolute;
@@ -408,6 +437,3 @@ hr {
   font-size: 12px;
   color: #fff;
 }
-
-
-
