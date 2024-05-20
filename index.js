@@ -283,12 +283,15 @@ function getCommentClass(predictions) {
   if (predictions[2] > 0.5) classes.push('threat');
   if (predictions[3] > 0.5) classes.push('insult');
   if (predictions[4] > 0.5) classes.push('identity_hate');
-  return classes.join(' '); // Combine classes for multiple matching labels
+  return classes.join(' ');
 }
 
+
 function formatPredictions(predictions) {
-  return predictions.map(pred => pred.toFixed(2)).join(', '); // Format for display
+  const labels = ["toxic", "severe-toxic", "threat", "insult", "identity_hate"];
+  return labels.map((label, index) => `${label}: ${predictions[index].toFixed(2)}`).join(', ');
 }
+
 
 //get specific post
 app.get('/posts/:postId', async (req, res) => {

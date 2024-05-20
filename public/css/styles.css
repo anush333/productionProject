@@ -67,6 +67,9 @@ h1, h2, h3, h4, h5, h6, .post-title {
   font-size: 1em;
   line-height: 1.5em;
   color: #666;
+  text-align: justify;
+  word-wrap: break-word; 
+  overflow-wrap: break-word; 
 }
 
 .continue-reading {
@@ -198,6 +201,10 @@ h1, h2, h3, h4, h5, h6, .post-title {
   transition: background-color 0.3s;
 }
 
+.justified {
+  text-align: justify;
+}
+
 ul {
   list-style-type: none;
 }
@@ -289,27 +296,50 @@ li:last-child {
 .normal {
   color: black;
 }
-
 .toxic {
   color: white;
   background-color: #cf5e54;
 }
 
 .severe-toxic {
-  color: darkred;
+  color: white;
+  background-color: darkred;
 }
 
 .threat {
+  color: white;
   background-color: #7b403b;
 }
 
 .insult {
+  color: white;
   background-color: #ba6861;
 }
 
 .identity_hate {
+  color: white;
   background-color: #ff9999;
 }
+
+/* Composite classes for multiple toxic traits */
+.toxic.severe-toxic {
+  background: linear-gradient(to right, #cf5e54, darkred);
+}
+
+.toxic.threat {
+  background: linear-gradient(to right, #cf5e54, #7b403b);
+}
+
+.severe-toxic.threat {
+  background: linear-gradient(to right, darkred, #7b403b);
+}
+
+.insult.identity_hate {
+  background: linear-gradient(to right, #ba6861, #ff9999);
+}
+
+
+
 
 .divider:after,
 .divider:before {
