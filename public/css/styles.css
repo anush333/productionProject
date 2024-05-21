@@ -12,7 +12,7 @@ h1, h2, h3, h4, h5, h6, .post-title {
 }
 
 .container {
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   padding: 20px;
 }
@@ -92,7 +92,7 @@ h1, h2, h3, h4, h5, h6, .post-title {
   margin-top: 10px;
 }
 
-.edit {
+.edit, .delete {
   background-color: #F7B801;
   border: none;
   padding: 10px 15px;
@@ -100,26 +100,18 @@ h1, h2, h3, h4, h5, h6, .post-title {
   color: #333;
   font-size: 0.9em;
   border-radius: 3px;
-  width: 45%;
+  width: 45%; 
   text-align: center;
 }
 
 .delete {
   background-color: #D33F49;
-  border: none;
-  padding: 10px 15px;
-  text-decoration: none;
-  color: #333;
-  font-size: 0.9em;
-  border-radius: 3px;
-  width: 45%;
-  text-align: center;
+  margin-right: 0;
 }
 
 .edit:hover, .delete:hover {
   background-color: #ddd;
 }
-
 .post-new {
   margin-bottom: 20px;
   width: 100%;
@@ -151,7 +143,8 @@ h1, h2, h3, h4, h5, h6, .post-title {
   height: 45px;
   font-size: 16px;
   padding: 5px 10px;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
   margin-bottom: 3px;
 }
 
@@ -247,8 +240,8 @@ li:last-child {
   border: 0;
   border-radius: 0;
   margin-bottom: 0;
-  font-size: 12px;
-  letter-spacing: 5px;
+  font-size: 13px;
+  letter-spacing: 7px;
 }
 
 .navbar-default {
@@ -264,6 +257,8 @@ li:last-child {
 
 .navbar-right {
   margin-top: -30px;
+  margin-left: 200px;
+  float: left !important;
 }
 
 .navbar-nav {
@@ -284,9 +279,16 @@ li:last-child {
   margin-top: 27px;
 }
 
+#contact{
+padding-right: 30px;
+}
 #addpost {
   font-size: 16px;
   padding-left: 10px;
+}
+
+#logout {
+  padding-left: 25px;
 }
 
 .footer-padding {
@@ -338,9 +340,6 @@ li:last-child {
   background: linear-gradient(to right, #ba6861, #ff9999);
 }
 
-
-
-
 .divider:after,
 .divider:before {
   content: "";
@@ -387,15 +386,32 @@ li:last-child {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.btn-add-post {
+  width: 100%;
+  max-width: 200px;
+  margin-top: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #0056b3;
+  color: white;
+}
+
+.btn-add-post:hover {
+  background-color: #00408d;
+}
+
 .btn {
   margin-top: 10px;
-  width: auto;
+  width: 100%;
+  max-width: 100px;
   padding: 10px 20px;
 }
 
 .btn-post-comment {
   margin-top: 3px;
-  width: auto;
+  width: 100%;
+  max-width: 200px;
   padding: 10px 20px;
 }
 
@@ -442,18 +458,6 @@ hr {
   margin-bottom: 20px;
 }
 
-.container {
-  width: 90%;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.post, .form-control {
-  display: block;
-  width: 100%;
-  margin-bottom: 5px;
-}
-
 .footer {
   position: absolute;
   text-align: center;
@@ -467,4 +471,95 @@ hr {
   margin-top: 25px;
   font-size: 12px;
   color: #fff;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+  }
+
+  .post {
+    padding: 15px;
+  }
+
+  .edit-delete {
+    flex-direction: column;
+    
+  }
+
+  .edit, .delete {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .navbar-brand {
+    font-size: 24px;
+  }
+
+  .form-control {
+    width: 100%;
+  }
+
+  .h-custom {
+    height: auto;
+    padding: 20px 0;
+  }
+
+  .col-xl-5, .col-xl-4 {
+    padding: 15px;
+  }
+
+  .navbar-right {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 100%;
+  }
+
+  .navbar-brand {
+    font-size: 20px;
+  }
+
+  .edit, .delete, .btn, .btn-primary, .btn-add-post, .btn-post-comment {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .post h2 {
+    font-size: 1.2em;
+  }
+}
+
+@media (max-height: 800px) {
+  .h-custom {
+    height: auto;
+    padding: 20px 0;
+  }
+
+  .post {
+    padding: 10px;
+  }
+
+  .edit, .delete {
+    font-size: 0.8em;
+  }
+}
+
+@media (max-height: 600px) {
+  .h-custom {
+    height: auto;
+    padding: 10px 0;
+  }
+
+  .post {
+    padding: 5px;
+  }
+
+  .edit, .delete {
+    font-size: 0.7em;
+  }
 }

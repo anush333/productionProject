@@ -16,7 +16,7 @@
         <% post.post_comments.forEach(comment => { %>
           <div class="comment <%= getCommentClass(comment.prediction) %>">
             <p class="comment-user"><strong><%= comment.comment_user %>:</strong></p>
-            <p><%= comment.comment_body %> (Prediction: <%= formatPredictions(comment.prediction) %>)</p>
+            <p><%- comment.comment_body.replace(/\n/g, '<br>') %> <br> (Prediction: <%= formatPredictions(comment.prediction) %>)</p>
             <!-- Form to delete comment -->
             <% if (role === "admin") { %>
               <form action="/posts/<%= post._id %>/delete-comment" method="POST">
