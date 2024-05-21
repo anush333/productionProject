@@ -11,10 +11,23 @@ h1, h2, h3, h4, h5, h6, .post-title {
   font-family: 'Bitter', serif; 
 }
 
-.container {
+.container, .container-home {
   width: 90%;
   margin: 0 auto;
   padding: 20px;
+}
+
+.container-home {
+  padding-top: 5px;
+}
+
+.contact-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
 }
 
 .post-grid {

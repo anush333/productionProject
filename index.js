@@ -100,6 +100,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage }).single('post_image');
 
+app.get("/about", async(req, res) =>{
+  res.render("about");
+});
+
+app.get("/contact", async(req, res) =>{
+  res.render("contact");
+});
 
 //user registration
 app.get("/signup", async(req, res) => {
