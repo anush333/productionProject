@@ -364,7 +364,8 @@ li:last-child {
 }
 
 .col-xl-5 {
-  flex-grow: 1;
+  flex-grow: 0.3;
+  margin-top: -27px;
 }
 
 .register-img-div {

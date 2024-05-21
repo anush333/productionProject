@@ -107,6 +107,7 @@ app.get("/signup", async(req, res) => {
 });
 
 
+
 app.post("/signup", async (req, res) => {
   const { user_name, user_email, user_password } = req.body;
   try {
@@ -114,6 +115,10 @@ app.post("/signup", async (req, res) => {
       throw new Error("Enter value for all fields.");
     if (!validator.validate(user_email))
       throw new Error("Invalid Email.");
+
+    const passwordRegex = /^(?=.*[0-9])(?=.*[@#])[a-zA-Z0-9@#]{8,}$/;
+    if (!passwordRegex.test(user_password))
+      throw new Error("Password must be at least 8 characters long, include at least one number, and one symbol like @ or #.");
 
     const encryptedPassword = await bcrypt.hash(user_password, 10);
     const user = await User.create({
@@ -128,7 +133,6 @@ app.post("/signup", async (req, res) => {
     res.redirect("/signup");
   }
 });
-
 //user login
 app.get("/login", async(req, res) => {
   res.render("login");
@@ -230,6 +234,10 @@ app.post("/change-password", passwordResetFlowMiddleware, async (req, res) => {
     if (password !== confirm_password)
       throw new Error("Passwords do not match");
 
+    const passwordRegex = /^(?=.*[0-9])(?=.*[@#])[a-zA-Z0-9@#]{8,}$/;
+    if (!passwordRegex.test(confirm_password))
+      throw new Error("Password must be at least 8 characters long, include at least one number, and one symbol like @ or #.");
+
     // res.json("done");
     const encryptedPassword = await bcrypt.hash(confirm_password, 10);
 
@@ -243,7 +251,7 @@ app.post("/change-password", passwordResetFlowMiddleware, async (req, res) => {
   res.redirect("/login") 
 } catch (error) {
   req.session.error_msg = error.message;
-  res.redirect("/login");
+  res.redirect("/change-password");
 }
    
 });
