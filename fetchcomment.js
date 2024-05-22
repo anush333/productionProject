@@ -17,12 +17,5 @@ async function fetchComments(query = {}, options = {}) {
         throw error;
     }
 }
-
-
-
-
-// fetchComments().then(comments => console.log("comments fetched"))
-//               .catch(error => console.error('Failed to fetch comments:', error));
-
               
 export default fetchComments;
