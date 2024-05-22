@@ -125,11 +125,24 @@ h1, h2, h3, h4, h5, h6, .post-title {
 .edit:hover, .delete:hover {
   background-color: #ddd;
 }
+
 .post-new {
   margin-bottom: 20px;
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1em;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.commwnt-new {
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #666;
+  color: black;
   border-radius: 4px;
   font-size: 1em;
   outline: none;
@@ -160,6 +173,8 @@ h1, h2, h3, h4, h5, h6, .post-title {
   max-width: 500px;
   margin-bottom: 3px;
 }
+
+
 
 .form-outline {
   margin-bottom: 20px;
@@ -247,6 +262,14 @@ li:last-child {
   color: #8E3B46;
 }
 
+.separator {
+  border-left: 1px solid white;
+  height: 40px;
+  margin-top: 2px !important; /* Ensuring the margin is applied */
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .navbar {
   padding-top: 0px;
   padding-bottom: 0px;
@@ -255,11 +278,18 @@ li:last-child {
   margin-bottom: 0;
   font-size: 13px;
   letter-spacing: 7px;
+  background-color: #0056b3;
 }
 
 .navbar-default {
   background-color: #0056b3;
 }
+
+.navbar-header {
+  float: left;
+}
+
+
 
 .navbar-brand {
   color: white !important;
@@ -269,40 +299,40 @@ li:last-child {
 }
 
 .navbar-right {
-  margin-top: -30px;
+  float: right;
+  margin-top: 15px;
   margin-left: 200px;
-  float: left !important;
 }
 
 .navbar-nav {
-  padding-top: 0px;
+  margin: 0;
+}
+
+.navbar-nav li {
+  float: left;
+  margin-top: -30px;
 }
 
 .navbar-nav li a {
   color: white !important;
+  padding: 15px;
 }
 
 .navbar-nav li a:hover {
   color: #1abc9c !important;
 }
 
-.navbar-nav .separator {
-  border-left: 1px solid white;
-  height: 40px;
-  margin-top: 27px;
+
+#contact {
+  padding-right: 10px;
 }
 
-#contact{
-padding-right: 30px;
-}
-#addpost {
-  font-size: 16px;
+#addpost, #logout {
   padding-left: 10px;
+  font-size: 16px;
 }
 
-#logout {
-  padding-left: 25px;
-}
+
 
 .footer-padding {
   padding-bottom: 60px;
@@ -505,9 +535,33 @@ hr {
     width: 100%;
     margin-bottom: 10px;
   }
+  .navbar-header {
+    float: none;
+    text-align: center;
+  }
 
   .navbar-brand {
+    margin: 0 auto;
+    display: block;
     font-size: 24px;
+  }
+
+  .navbar-nav {
+    float: none;
+    text-align: center;
+  }
+
+  .navbar-nav li {
+    float: none;
+    display: inline-block;
+  }
+
+  .navbar-nav li a {
+    padding: 10px;
+  }
+
+  .separator {
+    display: none;
   }
 
   .form-control {
@@ -522,6 +576,7 @@ hr {
   .col-xl-5, .col-xl-4 {
     padding: 15px;
   }
+
 
   .navbar-right {
     margin-top: 0;
@@ -544,6 +599,13 @@ hr {
 
   .post h2 {
     font-size: 1.2em;
+  }
+  .navbar-brand {
+    font-size: 20px;
+  }
+
+  .navbar-nav li a {
+    padding: 8px;
   }
 }
 
