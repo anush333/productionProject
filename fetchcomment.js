@@ -3,16 +3,6 @@ import "dotenv/config";
 import Comment from "./Database/comment.js";
 
 
-
-const connectToDatabase = async () => {
-  try {
-    await mongoose.connect(process.env.URL);
-    console.log("Connected to MongoDB!");
-  } catch (error) {
-    console.error('Failed to connect to MongoDB:', error);
-  }
-}
-
 async function fetchComments(query = {}, options = {}) {
     try {
       const comments = await Comment.find(query)
@@ -30,9 +20,9 @@ async function fetchComments(query = {}, options = {}) {
 
 
 
-// Testing the function
-fetchComments().then(comments => console.log(comments))
-              .catch(error => console.error('Failed to fetch comments:', error));
+
+// fetchComments().then(comments => console.log("comments fetched"))
+//               .catch(error => console.error('Failed to fetch comments:', error));
 
               
 export default fetchComments;

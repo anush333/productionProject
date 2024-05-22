@@ -265,7 +265,7 @@ li:last-child {
 .separator {
   border-left: 1px solid white;
   height: 40px;
-  margin-top: 2px !important; /* Ensuring the margin is applied */
+  margin-top: 2px !important;
   margin-left: 10px;
   margin-right: 10px;
 }

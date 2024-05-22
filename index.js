@@ -159,11 +159,9 @@ app.post("/login", async (req, res) => {
     req.session.user = { id: validUser._id, name: validUser.user_name, role: validUser.user_role };
     res.cookie('token', token, { httpOnly: true });
     req.session.success_msg = "Login successful.";
-    console.log(req.session.success_msg)
     res.redirect("/");
   } catch (error) {
     req.session.error_msg = error.message;
-    console.log(req.session.error_msg)
     res.redirect("/login");
   }
 });
@@ -209,14 +207,10 @@ app.get("/verify-code", passwordResetFlowMiddleware, async (re, res) => {
 app.post("/verify-code", passwordResetFlowMiddleware, async (req, res) => {
   try {
     const validCode = JSON.stringify(req.session.code.code);
-    console.log("Valid code:", { validCode });
-
     const providedCode = req.body.verificationcode;
-
     if (validCode !== providedCode) {
       throw new Error("Invalid Code.");
     }
-
     res.redirect("/change-password");
   } catch (error) {
     req.session.error_msg = error.message;
@@ -235,9 +229,6 @@ app.post("/change-password", passwordResetFlowMiddleware, async (req, res) => {
   const confirm_password = req.body.confirm_password;
   const user_email = req.session.user_email.email;
   try {
-    console.log("new pass",{password});
-    console.log("Confirm", {confirm_password});
-    console.log(user_email);
     if (password !== confirm_password)
       throw new Error("Passwords do not match");
 
@@ -277,8 +268,6 @@ app.get("/newposts", async (req, res) => {
 //create post
 app.post("/newposts", upload, async (req, res) => {
   try {
-    console.log(req.body);
-    console.log(req.file);
     await Post.create({
       post_title: req.body.post_title,
       post_body: req.body.post_body,
@@ -313,7 +302,6 @@ app.get('/posts/:postId', async (req, res) => {
   try {
     const postId = req.params.postId;
     const role = req.session.user.role
-    // const post = await Post.findById(postId).lean(); // Fetch the post
     const post = await Post.findById(postId).populate({
       path: 'post_comments',
       select: 'comment_body comment_user _id' 
@@ -322,19 +310,9 @@ app.get('/posts/:postId', async (req, res) => {
     if (!post) {
       throw new Error('Post not found');
     }
-
-    console.log("Fetched comments: ", JSON.stringify(post.post_comments, null, 2));
-    // console.log("this is ", {post});
-    // const commentsWithPredictions = await processComments(); 
-    // const filteredComments = commentsWithPredictions.filter(c => c.post_id.toString() === postId); 
-
     const commentsWithPredictions = await processComments(post.post_comments);
     const filteredComments = commentsWithPredictions.filter(c => c.post_id && c.post_id.toString() === postId);
-
-
-    post.post_comments = filteredComments; // Attach comments to post
-    console.log("Filtered comments: ", JSON.stringify(post.post_comments, null, 2));
-    // console.log(post.post_comment)
+    post.post_comments = filteredComments; 
     res.render('post', {
       post,
       role,
@@ -385,7 +363,7 @@ app.post("/posts/:id", upload, async (req, res) => {
       try {
         fs.unlinkSync(`images/${req.body.old_image}`);
       } catch (err) {
-        console.log(err);
+        req.session.error_msg = err;
       }
     }
     req.session.success_msg = "Post has been edited.";
@@ -419,9 +397,6 @@ app.post('/delete/:id', async (req, res) => {
 app.post('/post/:postId/comments', async (req, res) => {
   const { comment_body} = req.body;
   const postId = req.params.postId;
-
-  const a = req.body
-  console.log('consoled', {a});
   try {
     // Create a new comment
     const comment = await Comment.create({ comment_body, post_id: postId, comment_user: req.session.user.name});

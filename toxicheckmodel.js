@@ -20,7 +20,7 @@ async function loadModel() {
     try {
         model = await tf.loadLayersModel(model_path);
         console.log('Model loaded successfully');
-        model.summary(); 
+        //model.summary(); 
     } catch (error) {
         console.error('Error loading model:', error);
     }
@@ -57,14 +57,5 @@ async function processComments() {
 
     return results;
 }
-
-
-
-processComments().then(results => {
-    console.log('comment processed');
-}).catch(error => {
-    console.error('Failed to process comments:', error);
-});
-
 
 export default processComments;
