@@ -384,6 +384,11 @@ app.post('/delete/:id', async (req, res) => {
     }
     await Comment.deleteMany({ post_id: post._id });
 
+    const imagePath = `images/${post.post_image}`;
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath);
+    }
+    
     await Post.findByIdAndDelete(post._id);
     req.session.success_msg = "Post has been deleted.";
     res.redirect('/');
